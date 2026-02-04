@@ -13,16 +13,6 @@ import {
 import apiClient, { apiCall } from '../../api/apiClient';
 
 /* =======================
-   NAV TYPES
-======================= */
-type RootStackParamList = {
-  ProductList: undefined;
-  ContinueScreen: { cartItems: Product[] };
-};
-
-
-
-/* =======================
    TYPES
 ======================= */
 type Product = {
@@ -51,7 +41,6 @@ const FILTERS: ScrapFilter[] = [
 ];
 
 const ProductListScreen = () => {
-
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedScrapTypes, setSelectedScrapTypes] = useState<number[]>([0]);
@@ -199,6 +188,7 @@ const ProductListScreen = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Product List</Text>
 
+      {/* SEARCH */}
       <TextInput
         placeholder="Search product"
         value={searchText}
@@ -206,6 +196,7 @@ const ProductListScreen = () => {
         style={styles.searchBox}
       />
 
+      {/* FILTER */}
       <FlatList
         data={FILTERS}
         horizontal
@@ -215,7 +206,7 @@ const ProductListScreen = () => {
         style={styles.filterList}
       />
 
-      {/* LIST AREA (IMPORTANT) */}
+      {/* LIST AREA */}
       <View style={styles.listContainer}>
         {loading ? (
           <ActivityIndicator size="large" color="#2e7d32" />
@@ -224,6 +215,7 @@ const ProductListScreen = () => {
             data={filteredProducts}
             keyExtractor={(item) => item.ProductId.toString()}
             renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
           />
         )}
@@ -236,7 +228,6 @@ const ProductListScreen = () => {
           cart.length === 0 && styles.continueBtnDisabled,
         ]}
         disabled={cart.length === 0}
-        
       >
         <Text style={styles.continueText}>
           Continue ({cart.length})
@@ -263,22 +254,29 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  filterList: { marginBottom: 14 },
+  filterList: { marginBottom: 12 },
+
   filterChip: {
-    height: 40,
-    paddingHorizontal: 18,
-    borderRadius: 20,
+    height: 36,
+    paddingHorizontal: 16,
+    borderRadius: 18,
     backgroundColor: '#e6e6e6',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: 8,
   },
   filterChipActive: { backgroundColor: '#2e7d32' },
-  filterText: { fontSize: 14, color: '#444' },
+  filterText: { fontSize: 13, color: '#444' },
   filterTextActive: { color: '#fff', fontWeight: '600' },
 
   listContainer: { flex: 1 },
-  listContent: { paddingBottom: 90 },
+
+  /* ⭐ KEY FIX */
+  listContent: {
+    flexGrow: 1,
+    paddingBottom: 80,   // space for Continue button
+    alignItems: 'stretch',
+  },
 
   card: {
     flexDirection: 'row',
@@ -307,7 +305,7 @@ const styles = StyleSheet.create({
 
   continueBtn: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 16,
     left: 16,
     right: 16,
     height: 48,
@@ -315,6 +313,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 5,
   },
   continueBtnDisabled: { backgroundColor: '#aaa' },
   continueText: { color: '#fff', fontSize: 16, fontWeight: '600' },
