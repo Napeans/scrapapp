@@ -10,7 +10,6 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-
 // --- Theme Colors ---
 const BACKGROUND_COLOR = '#F0F4F2';
 const PRIMARY_BLUE = '#1E90FF';
@@ -33,11 +32,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToVerification }) =
   // A simple check to ensure the mobile number is 10 digits before enabling the button
   const isButtonEnabled = mobileNumber.length === 10;
 
-  /**
-   * Placeholder function for handling the login button press.
-   * In a real application, this would call an API to send the OTP,
-   * handle success/error, and then navigate to the Verification screen.
-   */
+
+
+
   const handleGetVerificationCode = () => {
     if (isButtonEnabled) {
       console.log('Requesting OTP for:', mobileNumber);

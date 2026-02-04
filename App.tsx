@@ -11,11 +11,10 @@ import {
 } from 'react-native';
 
 // Import your custom screen components
-import LoginScreen from './source/login';
-import VerificationScreen from './source/verification';
-import HomeScreen from './source/home';
-import LifetimeFree from './source/life time free';
-import BookOneTime from './source/book one time';
+import LoginScreen from './source/pages/login/login';
+import VerificationScreen from './source/pages/login/verification';
+import Productlist from './source/pages/products/productlist';
+
 
 // Define the custom background color from your image
 const BACKGROUND_COLOR = '#F0F4F2';
@@ -232,31 +231,8 @@ const App: React.FC = () => {
         
       case 'Home':
         return (
-          <HomeScreen 
-            onNavigateToDashboard={() => console.log('Navigate to Dashboard')}
-            onNavigateToSettings={() => console.log('Navigate to Settings')}
-            onNavigateToDesign={() => console.log('Navigate to Contact')}
-            onLogout={handleLogout}
-            onNavigateToLifetimeFree={handleNavigateToLifetimeFree}
-            onNavigateToBookOneTime={handleNavigateToBookOneTime}
-          />
+          <Productlist/>
         );
-        
-      case 'LifetimeFree':
-        return (
-          <LifetimeFree 
-            onGoBack={handleNavigateBackToHome}
-          />
-        );
-        
-      case 'BookOneTime':
-        return (
-          <BookOneTime 
-            onGoBack={handleNavigateBackToHome}
-            onNavigateToSchedule={handleNavigateToSchedule}
-          />
-        );
-        
       default:
         // Default to login if state is unexpected
         return <LoginScreen onNavigateToVerification={handleNavigateToVerification} />;
