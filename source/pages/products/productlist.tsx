@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  filterList: { marginBottom: 12 },
+  filterList: { marginBottom: 0 },
 
   filterChip: {
     height: 36,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   filterText: { fontSize: 13, color: '#444' },
   filterTextActive: { color: '#fff', fontWeight: '600' },
 
-  listContainer: { flex: 1 },
+  listContainer: { flex: 10 },
 
   /* ⭐ KEY FIX */
   listContent: {

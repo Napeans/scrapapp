@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
    AXIOS CLIENT
 ======================= */
 const apiClient = axios.create({
-  baseURL: 'http://192.168.29.81/scrap/api/',
+  baseURL: 'http://172.20.10.6/scrap/api/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
