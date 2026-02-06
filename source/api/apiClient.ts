@@ -1,13 +1,10 @@
 import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/* =======================
-   BASE AXIOS INSTANCE
-======================= */
-const BASE_URL = 'http://172.20.10.6/scrap/api/';
+import { BASE_URL } from '../config/appConfig';
 
 const apiClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL+"api/",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

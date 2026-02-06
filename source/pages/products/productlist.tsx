@@ -11,7 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import apiClient, { apiCall } from '../../api/apiClient';
-
+import { BASE_URL } from '../../config/appConfig';
 
 
 
@@ -150,7 +150,7 @@ const addToCart = (item: any) => {
     return (
       <View style={styles.card}>
         <Image
-          source={{ uri: item.ProductImage || 'https://via.placeholder.com/80' }}
+          source={{ uri:(item.ProductImage)? BASE_URL+item.ProductImage : BASE_URL+'Images/imageNotAvailable.jpg' }}
           style={styles.image}
         />
 
