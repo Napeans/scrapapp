@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import PlusIcon from '../../icons/PlusIcon';
+import MinusIcon from '../../icons/MinusIcon';
 import {
   View,
   Text,
@@ -161,12 +163,21 @@ const addToCart = (item: any) => {
           <Text style={styles.unit}>{item.QuantityPerPrice}</Text>
         </View>
 
-        <TouchableOpacity
-          style={[styles.addBtn, added && styles.addedBtn]}
-          onPress={() => addToCart(item)}
-        >
-          <Text style={styles.addText}>{added ? 'REMOVE' : 'ADD'}</Text>
-        </TouchableOpacity>
+    <TouchableOpacity
+  style={[styles.addBtn, added && styles.addedBtn]}
+  onPress={() => addToCart(item)}
+>
+  {added ? (
+    <MinusIcon size={16} color="#fff" />
+  ) : (
+    <PlusIcon size={16} color="#fff" />
+  )}
+
+  <Text style={styles.addText}>
+    {added ? 'REMOVE' : 'ADD'}
+  </Text>
+</TouchableOpacity>
+
       </View>
     );
   };
@@ -284,14 +295,26 @@ const styles = StyleSheet.create({
   price: { fontSize: 13, fontWeight: 'bold', color: '#2e7d32' },
   unit: { fontSize: 11, color: '#777' },
 
-  addBtn: {
-    backgroundColor: '#2e7d32',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  addedBtn: { backgroundColor: '#FFA500' },
-  addText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+addBtn: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingHorizontal: 12,
+  paddingVertical: 6,
+  borderRadius: 18,
+  backgroundColor: '#34b977',
+},
+
+addedBtn: {
+  backgroundColor: '#FF3B30',
+},
+
+addText: {
+  color: '#fff',
+  fontSize: 14,
+  fontWeight: '600',
+  marginLeft: 4,
+},
 
   continueBtn: {
     position: 'absolute',
