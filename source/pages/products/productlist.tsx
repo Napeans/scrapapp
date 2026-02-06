@@ -12,40 +12,18 @@ import {
 } from 'react-native';
 import apiClient, { apiCall } from '../../api/apiClient';
 
-/* =======================
-   TYPES
-======================= */
-type Product = {
-  ProductId: number;
-  ScrapTypeId: number;
-  ProductName: string;
-  ProductImage: string;
-  MarketPrice: number;
-  OurPrice: number;
-  QuantityPerPrice: string;
-};
 
-type ScrapFilter = {
-  id: number;
-  label: string;
-};
 
-/* =======================
-   FILTER DATA
-======================= */
-const FILTERS: ScrapFilter[] = [
-  { id: 0, label: 'All' },
-  { id: 1, label: 'Iron' },
-  { id: 2, label: 'Copper' },
-  { id: 3, label: 'Aluminium' },
-];
+
+
 
 const ProductListScreen = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any>([]);
+   const [filters, setFilters] = useState<any>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [selectedScrapTypes, setSelectedScrapTypes] = useState<number[]>([0]);
   const [searchText, setSearchText] = useState('');
-  const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   /* =======================
@@ -54,11 +32,12 @@ const ProductListScreen = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await apiCall<Product[]>(
+      const response = await apiCall<any>(
         apiClient.get('product/GetProductDetails/1')
       );
-      setProducts(response);
-      setFilteredProducts(response);
+      setProducts(response?.productDetailsModels);
+      setFilteredProducts(response.productDetailsModels);
+      setFilters(response.mst_Scrap_Types)
     } catch (error) {
       console.log('API Error', error);
     } finally {
@@ -94,7 +73,6 @@ const ProductListScreen = () => {
 
   const applyFilter = (scrapTypeId: number) => {
     let updated = [...selectedScrapTypes];
-
     if (scrapTypeId === 0) {
       updated = [0];
     } else {
@@ -118,17 +96,30 @@ const ProductListScreen = () => {
   /* =======================
      CART
   ======================= */
-  const addToCart = (item: Product) => {
-    if (!cart.find(p => p.ProductId === item.ProductId)) {
-      setCart([...cart, item]);
+const addToCart = (item: any) => {
+  setCart(prevCart => {
+    const exists = prevCart.some(
+      p => p.ProductId === item.ProductId
+    );
+
+    if (exists) {
+      // Remove item
+      return prevCart.filter(
+        p => p.ProductId !== item.ProductId
+      );
     }
-  };
+
+    // Add item
+    return [...prevCart, item];
+  });
+};
+
 
   /* =======================
      RENDER FILTER
   ======================= */
-  const renderFilter = ({ item }: { item: ScrapFilter }) => {
-    const isSelected = selectedScrapTypes.includes(item.id);
+  const renderFilter = ({ item }: { item: any }) => {
+    const isSelected = selectedScrapTypes.includes(item.ScrapTypeId);
 
     return (
       <TouchableOpacity
@@ -136,7 +127,7 @@ const ProductListScreen = () => {
           styles.filterChip,
           isSelected && styles.filterChipActive,
         ]}
-        onPress={() => applyFilter(item.id)}
+        onPress={() => applyFilter(item.ScrapTypeId)}
       >
         <Text
           style={[
@@ -144,7 +135,7 @@ const ProductListScreen = () => {
             isSelected && styles.filterTextActive,
           ]}
         >
-          {item.label}
+          {item.ScrapType}
         </Text>
       </TouchableOpacity>
     );
@@ -153,7 +144,7 @@ const ProductListScreen = () => {
   /* =======================
      RENDER PRODUCT
   ======================= */
-  const renderItem: ListRenderItem<Product> = ({ item }) => {
+  const renderItem: ListRenderItem<any> = ({ item }) => {
     const added = cart.some(p => p.ProductId === item.ProductId);
 
     return (
@@ -173,9 +164,8 @@ const ProductListScreen = () => {
         <TouchableOpacity
           style={[styles.addBtn, added && styles.addedBtn]}
           onPress={() => addToCart(item)}
-          disabled={added}
         >
-          <Text style={styles.addText}>{added ? 'ADDED' : 'ADD'}</Text>
+          <Text style={styles.addText}>{added ? 'REMOVE' : 'ADD'}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -198,10 +188,10 @@ const ProductListScreen = () => {
 
       {/* FILTER */}
       <FlatList
-        data={FILTERS}
+        data={filters}
         horizontal
         renderItem={renderFilter}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.ScrapTypeId.toString()}
         showsHorizontalScrollIndicator={false}
         style={styles.filterList}
       />
@@ -211,7 +201,7 @@ const ProductListScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#2e7d32" />
         ) : (
-          <FlatList<Product>
+          <FlatList<any>
             data={filteredProducts}
             keyExtractor={(item) => item.ProductId.toString()}
             renderItem={renderItem}
@@ -300,7 +290,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
   },
-  addedBtn: { backgroundColor: '#999' },
+  addedBtn: { backgroundColor: '#FFA500' },
   addText: { color: '#fff', fontSize: 12, fontWeight: '600' },
 
   continueBtn: {

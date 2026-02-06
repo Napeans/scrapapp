@@ -85,7 +85,6 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({
     try {
       setIsVerifying(true);
       setErrorMessage('');
-debugger
       // 🔐 LOGIN API CALL
       await login(mobileNumber, fullOtp);
 
