@@ -15,11 +15,16 @@ import {
 import apiClient, { apiCall } from '../../api/apiClient';
 import { BASE_URL } from '../../config/appConfig';
 
+interface ProductSummaryScreenProps {
+  onNavigateToProductSummary: () => void;
+}
 
 
 
 
-const ProductListScreen = () => {
+const ProductListScreen : React.FC<ProductSummaryScreenProps> = ({
+  onNavigateToProductSummary
+}) => {
   const [products, setProducts] = useState<any>([]);
    const [filters, setFilters] = useState<any>([]);
   const [filteredProducts, setFilteredProducts] = useState<any>([]);
@@ -94,7 +99,10 @@ const ProductListScreen = () => {
     setSearchText(text);
     applyAllFilters(selectedScrapTypes, text);
   };
+const handleContinue=()=>{
+onNavigateToProductSummary();
 
+}
   /* =======================
      CART
   ======================= */
@@ -229,6 +237,7 @@ const addToCart = (item: any) => {
           cart.length === 0 && styles.continueBtnDisabled,
         ]}
         disabled={cart.length === 0}
+          onPress={handleContinue}
       >
         <Text style={styles.continueText}>
           Continue ({cart.length})

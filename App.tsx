@@ -16,10 +16,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './source/pages/login/login';
 import VerificationScreen from './source/pages/login/verification';
 import Productlist from './source/pages/products/productlist';
+import RequestSummary from './source/pages/products/requestSummary'
+
+
 
 const BACKGROUND_COLOR = '#F0F4F2';
 
-type AppScreen = 'Login' | 'Verification' | 'Home';
+type AppScreen = 'Login' | 'Verification' | 'Home'| 'RequestSummary';
 
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('Login');
@@ -73,7 +76,9 @@ const App: React.FC = () => {
   const handleNavigateToHome = () => {
     handleLoginSuccess();
   };
-
+const handleNavigateToProductSummary=()=>{
+    setCurrentScreen('RequestSummary');
+}
   const handleNavigateBackToLogin = () => {
     setCurrentScreen('Login');
   };
@@ -123,11 +128,14 @@ const App: React.FC = () => {
 
       case 'Home':
         return (
-          <Productlist />
-          // If you want logout button later:
-          // <Productlist onLogout={handleLogout} />
+          <Productlist 
+            onNavigateToProductSummary={handleNavigateToProductSummary}
+          />
         );
-
+      case 'RequestSummary':
+        return (
+          <RequestSummary />
+        );
       default:
         return null;
     }
