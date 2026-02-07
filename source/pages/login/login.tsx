@@ -11,24 +11,17 @@ import {
   Dimensions,
 } from 'react-native';
 import GlobalStyles from '../../theme/styles';
+
+import { navigationProps } from '../../types/navigation';
 // --- Theme Colors ---
 const BACKGROUND_COLOR = '#F0F4F2';
 const PRIMARY_BLUE = '#D8FECB';
 const FONT_COLOR = '#65AF44';
-
-// Get screen height for better responsive styling
 const { height } = Dimensions.get('window');
 
-/**
- * Type definition for the component's props. 
- * In a real app, this would include navigation props.
- */
-interface LoginScreenProps {
-  // Placeholder for navigation or other props
-  onNavigateToVerification: (mobile: string) => void;
-}
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToVerification }) => {
+
+const LoginScreen: React.FC<navigationProps> = ({ onNavigateToVerification }) => {
   const [mobileNumber, setMobileNumber] = useState<string>('');
   
   // A simple check to ensure the mobile number is 10 digits before enabling the button
@@ -39,9 +32,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToVerification }) =
 
   const handleGetVerificationCode = () => {
     if (isButtonEnabled) {
-      console.log('Requesting OTP for:', mobileNumber);
-      // Actual navigation logic would go here:
-      onNavigateToVerification(mobileNumber); 
+      onNavigateToVerification?.(mobileNumber);
     }
   };
 

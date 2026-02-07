@@ -9,15 +9,24 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
+import BackIcon from '../../icons/BackIcon'
+import { navigationProps } from '../../types/navigation';
+const RequestSummaryScreen : React.FC<navigationProps> = ({
+  onNavigateToProduct
+}) => {
 
-const RequestSummaryScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.backText}>‹</Text>
+   <TouchableOpacity
+  onPress={onNavigateToProduct}
+  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+>
+  <BackIcon size={22} color="#000" />
+</TouchableOpacity>
         <Text style={styles.discard}>🗑 Discard</Text>
       </View>
 
@@ -94,7 +103,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   backText: {
-    fontSize: 22,
+    fontSize: 40,
   },
   discard: {
     color: '#E53935',

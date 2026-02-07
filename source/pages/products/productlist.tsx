@@ -15,14 +15,11 @@ import {
 import apiClient, { apiCall } from '../../api/apiClient';
 import { BASE_URL } from '../../config/appConfig';
 import GlobalStyles from '../../theme/styles';
-interface ProductSummaryScreenProps {
-  onNavigateToProductSummary: () => void;
-}
+
+import { navigationProps } from '../../types/navigation';
 
 
-
-
-const ProductListScreen : React.FC<ProductSummaryScreenProps> = ({
+const ProductListScreen : React.FC<navigationProps> = ({
   onNavigateToProductSummary
 }) => {
   const [products, setProducts] = useState<any>([]);
@@ -100,7 +97,7 @@ const ProductListScreen : React.FC<ProductSummaryScreenProps> = ({
     applyAllFilters(selectedScrapTypes, text);
   };
 const handleContinue=()=>{
-onNavigateToProductSummary();
+onNavigateToProductSummary?.();
 
 }
   /* =======================

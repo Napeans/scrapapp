@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { login } from '../../api/LoginService';
 import GlobalStyles from '../../theme/styles';
+import { navigationProps } from '../../types/navigation';
 /* =======================
    THEME COLORS
 ======================= */
@@ -22,19 +23,14 @@ const ERROR_RED = '#FF3B30';
 
 const { height } = Dimensions.get('window');
 
-interface VerificationScreenProps {
-  mobileNumber: string;
-  onNavigateToHome: () => void;
-  onNavigateBack: () => void;
-}
 
 const OTP_LENGTH = 4;
 const DEFAULT_OTP = '1234';
 
-const VerificationScreen: React.FC<VerificationScreenProps> = ({
+const VerificationScreen: React.FC<navigationProps> = ({
   mobileNumber,
   onNavigateToHome,
-  onNavigateBack,
+  onNavigateToLogin,
 }) => {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [isVerifying, setIsVerifying] = useState(false);

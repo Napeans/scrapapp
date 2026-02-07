@@ -122,7 +122,7 @@ const handleNavigateToProductSummary=()=>{
           <VerificationScreen
             mobileNumber={mobileNumber}
             onNavigateToHome={handleNavigateToHome}
-            onNavigateBack={handleNavigateBackToLogin}
+            onNavigateToLogin={handleNavigateBackToLogin}
           />
         );
 
@@ -134,7 +134,7 @@ const handleNavigateToProductSummary=()=>{
         );
       case 'RequestSummary':
         return (
-          <RequestSummary />
+          <RequestSummary onNavigateToProduct={handleNavigateToHome}/>
         );
       default:
         return null;
