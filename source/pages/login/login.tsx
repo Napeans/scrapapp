@@ -10,9 +10,11 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
+import GlobalStyles from '../../theme/styles';
 // --- Theme Colors ---
 const BACKGROUND_COLOR = '#F0F4F2';
-const PRIMARY_BLUE = '#1E90FF';
+const PRIMARY_BLUE = '#D8FECB';
+const FONT_COLOR = '#65AF44';
 
 // Get screen height for better responsive styling
 const { height } = Dimensions.get('window');
@@ -51,23 +53,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToVerification }) =
       >
         <View style={styles.content}>
           
-          {/* App Logo */}
-          <View style={styles.logoContainer}>
-            <Text style={styles.logo}>♻️</Text>
-            <Text style={styles.appName}>ScrapPro</Text>
-          </View>
-
-          {/* 1. Heading */}
-          <Text style={styles.heading}>Let's get started!</Text>
-
-          {/* 2. Body Text */}
-          <Text style={styles.bodyText}>
-            Enter your mobile number to login or create an account.
-          </Text>
 
           {/* 3. Input Field */}
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Mobile Number</Text>
+            <Text style={styles.inputLabel}>Enter your mobile number</Text>
             <TextInput
               style={styles.input}
               onChangeText={setMobileNumber}
@@ -81,23 +70,27 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToVerification }) =
 
           {/* 4. Button */}
           <TouchableOpacity
-            style={[styles.button, !isButtonEnabled && styles.buttonDisabled]}
+            style={[GlobalStyles.button, !isButtonEnabled && GlobalStyles.buttonDisabled]}
             onPress={handleGetVerificationCode}
             activeOpacity={0.8}
             disabled={!isButtonEnabled}
           >
-            <Text style={styles.buttonText}>Get Verification Code</Text>
+              <Text
+    style={[
+      GlobalStyles.buttonText,
+      !isButtonEnabled && GlobalStyles.buttonTextDisabled,
+    ]}
+  >Continue</Text>
           </TouchableOpacity>
+
+       <View style={styles.termsContainer}>
+  <Text style={styles.termsLabel}>
+    By continuing, you accept the{' '}
+    <Text style={styles.termsLink}>Terms and Condition</Text>.
+  </Text>
+</View>
         </View>
 
-        {/* 5. Bottom Text Body */}
-        <View style={styles.bottomContainer}>
-          <Text style={styles.termsText}>
-            By continuing you agree to our{' '}
-            <Text style={styles.linkText}>terms, conditions</Text> &{' '}
-            <Text style={styles.linkText}>privacy policy</Text>.
-          </Text>
-        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -119,46 +112,29 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  logo: {
-    fontSize: 60,
-    marginBottom: 10,
-  },
-  appName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1E90FF',
-  },
-  heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  bodyText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 40,
-    lineHeight: 24,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
   inputContainer: {
-    marginBottom: 30,
+    marginBottom: 20,
+  },
+    termsContainer: {
+    marginTop: 20,
   },
   inputLabel: {
-    fontSize: 16,
+    fontSize: 35,
     color: '#333',
     marginBottom: 8,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
+  termsLabel:{
+       fontSize: 15,
+    color: '#333',
+    marginBottom: 30,
+  },
+  termsLink: {
+  color: FONT_COLOR, 
+},
   input: {
     height: 56,
-    borderColor: '#ddd',
+    borderColor: FONT_COLOR,
     borderWidth: 1.5,
     borderRadius: 12,
     paddingHorizontal: 16,
@@ -170,43 +146,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
-  },
-  button: {
-    backgroundColor: PRIMARY_BLUE,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: PRIMARY_BLUE,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  buttonDisabled: {
-    backgroundColor: '#A9A9A9',
-    shadowColor: 'transparent',
-    elevation: 0,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  bottomContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  termsText: {
-    fontSize: 12,
-    color: '#888',
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  linkText: {
-    color: PRIMARY_BLUE,
-    fontWeight: 'bold',
-  },
+  }
 });
+
 
 export default LoginScreen;

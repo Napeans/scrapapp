@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import apiClient, { apiCall } from '../../api/apiClient';
 import { BASE_URL } from '../../config/appConfig';
-
+import GlobalStyles from '../../theme/styles';
 interface ProductSummaryScreenProps {
   onNavigateToProductSummary: () => void;
 }
@@ -233,13 +233,13 @@ const addToCart = (item: any) => {
       {/* CONTINUE BUTTON */}
       <TouchableOpacity
         style={[
-          styles.continueBtn,
-          cart.length === 0 && styles.continueBtnDisabled,
+          GlobalStyles.button,
+          cart.length === 0 && GlobalStyles.buttonDisabled,
         ]}
         disabled={cart.length === 0}
           onPress={handleContinue}
       >
-        <Text style={styles.continueText}>
+        <Text style={GlobalStyles.buttonText}>
           Continue ({cart.length})
         </Text>
       </TouchableOpacity>
@@ -310,7 +310,8 @@ addBtn: {
   justifyContent: 'center',
   paddingHorizontal: 12,
   paddingVertical: 6,
-  borderRadius: 18,
+  borderRadius: 7,
+  width:100,
   backgroundColor: '#34b977',
 },
 

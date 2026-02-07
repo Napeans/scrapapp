@@ -12,12 +12,12 @@ import {
   TextInput as RNTextInput,
 } from 'react-native';
 import { login } from '../../api/LoginService';
-
+import GlobalStyles from '../../theme/styles';
 /* =======================
    THEME COLORS
 ======================= */
 const BACKGROUND_COLOR = '#F0F4F2';
-const PRIMARY_BLUE = '#1E90FF';
+const PRIMARY_BLUE = '#65AF44';
 const ERROR_RED = '#FF3B30';
 
 const { height } = Dimensions.get('window');
@@ -125,28 +125,10 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.content}>
-          <View style={styles.logoContainer}>
-            <Text style={styles.logo}>♻️</Text>
-            <Text style={styles.appName}>ScrapPro</Text>
-          </View>
+          
+           <Text style={styles.inputLabel}>Enter the OTP sent to {formattedMobileNumber}</Text>
 
-          <Text style={styles.heading}>Verify your account</Text>
-
-          <View style={styles.phoneNumberContainer}>
-            <Text style={styles.bodyText}>
-              We have sent a 4-digit Verification Code to
-            </Text>
-
-            <View style={styles.phoneNumberRow}>
-              <Text style={styles.phoneNumber}>+91 {formattedMobileNumber}</Text>
-              <TouchableOpacity
-                style={styles.modifyButton}
-                onPress={onNavigateBack}
-              >
-                <Text style={styles.modifyButtonText}>Modify</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        
 
           <View style={styles.otpContainer}>
             {otp.map((digit, index) => (
@@ -173,12 +155,12 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({
           ) : null}
 
           <TouchableOpacity
-            style={[styles.button, !isButtonEnabled && styles.buttonDisabled]}
+            style={[GlobalStyles.button, !isButtonEnabled && GlobalStyles.buttonDisabled]}
             onPress={handleVerify}
             disabled={!isButtonEnabled || isVerifying}
           >
-            <Text style={styles.buttonText}>
-              {isVerifying ? 'Verifying...' : 'Verify and Continue'}
+            <Text style={GlobalStyles.buttonText}>
+              {isVerifying ? 'Verifying...' : 'Continue'}
             </Text>
           </TouchableOpacity>
 
@@ -187,7 +169,8 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({
             onPress={handleResendCode}
             disabled={isVerifying}
           >
-            <Text style={styles.resendText}>Didn't receive code? Resend</Text>
+            <Text style={styles.resendText}>
+                <Text style={styles.resendTextBold}>Didn't get OTP?</Text>{' '} Resend in 112 sec</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -223,6 +206,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 6,
   },
+    inputLabel: {
+    fontSize: 35,
+    color: '#333',
+    marginBottom: 8,
+    fontWeight: 'bold',
+  },
   modifyButtonText: { color: '#fff' },
   otpContainer: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   otpInput: {
@@ -230,6 +219,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderWidth: 2,
     borderRadius: 12,
+    borderColor:"#65AF44",
     textAlign: 'center',
     fontSize: 22,
     backgroundColor: '#fff',
@@ -246,6 +236,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { backgroundColor: '#aaa' },
   buttonText: { color: '#fff', fontSize: 18 },
-  resendButton: { marginTop: 12 },
-  resendText: { color: PRIMARY_BLUE },
+  resendButton: { marginTop: 12,fontSize:15 },
+  resendText: { color: '#333' },
+  resendTextBold:{fontSize: 18}
 });
