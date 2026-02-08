@@ -82,10 +82,12 @@ const VerificationScreen: React.FC<navigationProps> = ({
       setIsVerifying(true);
       setErrorMessage('');
       // 🔐 LOGIN API CALL
+      if(mobileNumber){
       await login(mobileNumber, fullOtp);
+      }
 
       // ✅ SUCCESS
-      onNavigateToHome();
+      onNavigateToHome?.();
     } catch (err: any) {
       console.log('Login failed:', err);
 
@@ -109,7 +111,7 @@ const VerificationScreen: React.FC<navigationProps> = ({
     inputRefs[0].current?.focus();
   };
 
-  const formattedMobileNumber = mobileNumber.replace(
+  const formattedMobileNumber = mobileNumber?.replace(
     /(\d{3})(\d{5})(\d{4})/,
     '$1 $2 $3'
   );
