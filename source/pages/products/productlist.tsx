@@ -161,12 +161,20 @@ const addToCart = (item: any) => {
           style={styles.image}
         />
 
-        <View style={styles.info}>
-          <Text style={styles.name}>{item.ProductName}</Text>
-          <Text style={styles.market}>Market: ₹{item.MarketPrice}</Text>
-          <Text style={styles.price}>Our Price: ₹{item.OurPrice}</Text>
-          <Text style={styles.unit}>{item.QuantityPerPrice}</Text>
-        </View>
+      <View style={styles.info}>
+  <Text style={styles.name}>{item.ProductName}</Text>
+
+  {Number(item.OurPrice) == Number(item.MarketPrice) ? (
+    <Text style={styles.price}>Price: ₹{item.OurPrice}</Text>
+  ) : (
+    <>
+      <Text style={styles.market}>Market: ₹{item.MarketPrice}</Text>
+      <Text style={styles.price}>Our Price: ₹{item.OurPrice}</Text>
+    </>
+  )}
+
+  <Text style={styles.unit}>Per {item.QuantityPerPrice}</Text>
+</View>
 
     <TouchableOpacity
   style={[styles.addBtn, added && styles.addedBtn]}
@@ -192,7 +200,6 @@ const addToCart = (item: any) => {
   ======================= */
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Product List</Text>
 
       {/* SEARCH */}
       <TextInput
@@ -276,7 +283,7 @@ const styles = StyleSheet.create({
   filterText: { fontSize: 13, color: '#444' },
   filterTextActive: { color: '#fff', fontWeight: '600' },
 
-  listContainer: { flex: 10 },
+  listContainer: { flex: 10 ,marginTop:-50},
 
   /* ⭐ KEY FIX */
   listContent: {
@@ -288,7 +295,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 5,
     padding: 10,
     marginBottom: 12,
     alignItems: 'center',
@@ -307,8 +314,8 @@ addBtn: {
   justifyContent: 'center',
   paddingHorizontal: 12,
   paddingVertical: 6,
-  borderRadius: 7,
-  width:100,
+  borderRadius: 5,
+  width:85,
   backgroundColor: '#34b977',
 },
 
@@ -318,7 +325,7 @@ addedBtn: {
 
 addText: {
   color: '#fff',
-  fontSize: 14,
+  fontSize: 12,
   fontWeight: '600',
   marginLeft: 4,
 },

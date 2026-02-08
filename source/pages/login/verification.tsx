@@ -12,14 +12,14 @@ import {
   TextInput as RNTextInput,
 } from 'react-native';
 import { login } from '../../api/LoginService';
-import GlobalStyles from '../../theme/styles';
+import GlobalStyles,{Colors} from '../../theme/styles';
 import { navigationProps } from '../../types/navigation';
 /* =======================
    THEME COLORS
 ======================= */
-const BACKGROUND_COLOR = '#F0F4F2';
-const PRIMARY_BLUE = '#65AF44';
-const ERROR_RED = '#FF3B30';
+const BACKGROUND_COLOR = Colors.BACKGROUND_COLOR
+const PRIMARY_BLUE = Colors.PRIMARY_BLUE;
+const ERROR_RED = Colors.ERROR_RED
 
 const { height } = Dimensions.get('window');
 
@@ -122,7 +122,7 @@ const VerificationScreen: React.FC<navigationProps> = ({
       >
         <View style={styles.content}>
           
-           <Text style={styles.inputLabel}>Enter the OTP sent to {formattedMobileNumber}</Text>
+           <Text style={GlobalStyles.headerLabel}>Enter the OTP sent to {formattedMobileNumber}</Text>
 
         
 
@@ -211,10 +211,10 @@ const styles = StyleSheet.create({
   modifyButtonText: { color: '#fff' },
   otpContainer: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   otpInput: {
-    width: 60,
-    height: 60,
+    width: 65,
+    height: 50,
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 5,
     borderColor:"#65AF44",
     textAlign: 'center',
     fontSize: 22,

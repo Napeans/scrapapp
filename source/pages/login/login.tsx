@@ -10,16 +10,11 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import GlobalStyles from '../../theme/styles';
+import GlobalStyles  ,{ Colors ,GlobalFontSize } from '../../theme/styles';
 
 import { navigationProps } from '../../types/navigation';
-// --- Theme Colors ---
-const BACKGROUND_COLOR = '#F0F4F2';
-const PRIMARY_BLUE = '#D8FECB';
-const FONT_COLOR = '#65AF44';
+
 const { height } = Dimensions.get('window');
-
-
 
 const LoginScreen: React.FC<navigationProps> = ({ onNavigateToVerification }) => {
   const [mobileNumber, setMobileNumber] = useState<string>('');
@@ -47,9 +42,9 @@ const LoginScreen: React.FC<navigationProps> = ({ onNavigateToVerification }) =>
 
           {/* 3. Input Field */}
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Enter your mobile number</Text>
+            <Text style={GlobalStyles.headerLabel}>Enter your mobile number</Text>
             <TextInput
-              style={styles.input}
+              style={GlobalStyles.input}
               onChangeText={setMobileNumber}
               value={mobileNumber}
               placeholder="Enter 10-digit mobile number"
@@ -90,7 +85,7 @@ const LoginScreen: React.FC<navigationProps> = ({ onNavigateToVerification }) =>
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: Colors.BACKGROUND_COLOR,
   },
   container: {
     flex: 1,
@@ -98,7 +93,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: height * 0.08,
     paddingBottom: 40,
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: Colors.BACKGROUND_COLOR,
   },
   content: {
     flex: 1,
@@ -109,35 +104,15 @@ const styles = StyleSheet.create({
     termsContainer: {
     marginTop: 20,
   },
-  inputLabel: {
-    fontSize: 35,
-    color: '#333',
-    marginBottom: 8,
-    fontWeight: 'bold',
-  },
+
   termsLabel:{
        fontSize: 15,
     color: '#333',
     marginBottom: 30,
   },
   termsLink: {
-  color: FONT_COLOR, 
-},
-  input: {
-    height: 56,
-    borderColor: FONT_COLOR,
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 18,
-    color: '#333',
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  }
+  color: "#65AF44", 
+}
 });
 
 
