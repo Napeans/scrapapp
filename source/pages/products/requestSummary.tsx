@@ -3,30 +3,34 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   StatusBar,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import BackIcon from '../../icons/BackIcon'
 import { navigationProps } from '../../types/navigation';
+
+// Modified: Feb 14, 2026 - Component name matches App.tsx and uses navigationProps interface
 const RequestSummaryScreen : React.FC<navigationProps> = ({
   onNavigateToProduct
 }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Modified: Feb 14, 2026 - Set barStyle to dark-content for better visibility on light background */}
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
-   <TouchableOpacity
-  onPress={onNavigateToProduct}
-  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
->
-  <BackIcon size={22} color="#000" />
-</TouchableOpacity>
+        {/* Modified: Feb 14, 2026 - Back button logic uses onNavigateToProduct from props */}
+        <TouchableOpacity
+          onPress={onNavigateToProduct}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        >
+          <BackIcon size={22} color="#000" />
+        </TouchableOpacity>
         <Text style={styles.discard}>🗑 Discard</Text>
       </View>
 
@@ -47,7 +51,7 @@ const RequestSummaryScreen : React.FC<navigationProps> = ({
         <View style={[styles.card, styles.greenCard]}>
           <View>
             <Text style={styles.bold}>Saturday</Text>
-            <Text style={styles.subText}>07 February 2026</Text>
+            <Text style={styles.subText}>14 February 2026</Text>
           </View>
           <TouchableOpacity>
             <Text style={styles.change}>⏱ Change</Text>
@@ -92,6 +96,8 @@ const RequestSummaryScreen : React.FC<navigationProps> = ({
 };
 
 export default RequestSummaryScreen;
+
+// Styles remain the same
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -182,19 +188,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     marginVertical: 10,
   },
-  donateBanner: {
-    marginTop: 20,
-    height: 70,
-    borderRadius: 14,
-    backgroundColor: '#E91E63',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  donateText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-  },
   bottomCard: {
     position: 'absolute',
     bottom: 0,
@@ -205,6 +198,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 10,
+    shadowColor: '#000', // Added for iOS shadow
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   bottomText: {
     fontSize: 16,

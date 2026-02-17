@@ -5,24 +5,13 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
   TextInput as RNTextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { login } from '../../api/LoginService';
-import GlobalStyles,{Colors} from '../../theme/styles';
 import { navigationProps } from '../../types/navigation';
-/* =======================
-   THEME COLORS
-======================= */
-const BACKGROUND_COLOR = Colors.BACKGROUND_COLOR
-const PRIMARY_BLUE = Colors.PRIMARY_BLUE;
-const ERROR_RED = Colors.ERROR_RED
-
-const { height } = Dimensions.get('window');
-
 
 const OTP_LENGTH = 4;
 const DEFAULT_OTP = '1234';
@@ -30,7 +19,6 @@ const DEFAULT_OTP = '1234';
 const VerificationScreen: React.FC<navigationProps> = ({
   mobileNumber,
   onNavigateToHome,
-  onNavigateToLogin,
 }) => {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [isVerifying, setIsVerifying] = useState(false);
@@ -44,30 +32,38 @@ const VerificationScreen: React.FC<navigationProps> = ({
   const fullOtp = otp.join('');
   const isButtonEnabled = fullOtp.length === OTP_LENGTH;
 
-  /* =======================
-     OTP INPUT HANDLER
-  ======================= */
+  // modified at todays date: 2026-02-13
   const handleChangeText = (text: string, index: number) => {
-    if (!/^\d*$/.test(text)) return;
-
+    const digitsOnly = text.replace(/\D/g, '');
     if (errorMessage) setErrorMessage('');
 
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-
-    if (text && index < OTP_LENGTH - 1) {
-      inputRefs[index + 1].current?.focus();
+    // Supports paste like "1234" while keeping one-digit cells.
+    if (digitsOnly.length > 1) {
+      const newOtp = [...otp];
+      digitsOnly
+        .slice(0, OTP_LENGTH - index)
+        .split('')
+        .forEach((digit, offset) => {
+          newOtp[index + offset] = digit;
+        });
+      setOtp(newOtp);
+      const nextIndex = Math.min(index + digitsOnly.length, OTP_LENGTH - 1);
+      inputRefs[nextIndex].current?.focus();
+      return;
     }
 
-    if (!text && index > 0) {
+    const newOtp = [...otp];
+    newOtp[index] = digitsOnly;
+    setOtp(newOtp);
+
+    if (digitsOnly && index < OTP_LENGTH - 1) {
+      inputRefs[index + 1].current?.focus();
+    }
+    if (!digitsOnly && index > 0) {
       inputRefs[index - 1].current?.focus();
     }
   };
 
-  /* =======================
-     VERIFY & LOGIN
-  ======================= */
   const handleVerify = async () => {
     if (!isButtonEnabled || isVerifying) return;
 
@@ -81,20 +77,13 @@ const VerificationScreen: React.FC<navigationProps> = ({
     try {
       setIsVerifying(true);
       setErrorMessage('');
-      // 🔐 LOGIN API CALL
-      if(mobileNumber){
-      await login(mobileNumber, fullOtp);
+      if (mobileNumber) {
+        await login(mobileNumber, fullOtp);
       }
-
-      // ✅ SUCCESS
       onNavigateToHome?.();
     } catch (err: any) {
       console.log('Login failed:', err);
-
-      setErrorMessage(
-        err?.message || 'Login failed. Please try again.'
-      );
-
+      setErrorMessage(err?.message || 'Login failed. Please try again.');
       setOtp(Array(OTP_LENGTH).fill(''));
       inputRefs[0].current?.focus();
     } finally {
@@ -102,31 +91,26 @@ const VerificationScreen: React.FC<navigationProps> = ({
     }
   };
 
-  /* =======================
-     RESEND OTP
-  ======================= */
+  // modified at todays date: 2026-02-13
   const handleResendCode = () => {
     setOtp(Array(OTP_LENGTH).fill(''));
     setErrorMessage('');
     inputRefs[0].current?.focus();
   };
 
-  const formattedMobileNumber = mobileNumber?.replace(
-    /(\d{3})(\d{5})(\d{4})/,
-    '$1 $2 $3'
-  );
-
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* modified at todays date: 2026-02-13 */}
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.content}>
-          
-           <Text style={GlobalStyles.headerLabel}>Enter the OTP sent to {formattedMobileNumber}</Text>
-
-        
+          <Text style={styles.title}>Verify Account</Text>
+          <Text style={styles.subtitle}>
+            Enter the secure code sent to{' '}
+            <Text style={styles.boldPhone}>+91 {mobileNumber}</Text>
+          </Text>
 
           <View style={styles.otpContainer}>
             {otp.map((digit, index) => (
@@ -134,41 +118,36 @@ const VerificationScreen: React.FC<navigationProps> = ({
                 key={index}
                 style={[
                   styles.otpInput,
-                  digit && styles.otpInputFilled,
-                  errorMessage && styles.otpInputError,
+                  digit ? styles.otpInputFilled : null,
+                  errorMessage ? styles.otpInputError : null,
                 ]}
                 ref={inputRefs[index]}
                 value={digit}
                 onChangeText={text => handleChangeText(text, index)}
                 keyboardType="numeric"
-                maxLength={1}
-                caretHidden
-                autoFocus={index === 0}
+                maxLength={10}
+                placeholder="-"
+                placeholderTextColor="#333"
               />
             ))}
           </View>
 
-          {errorMessage ? (
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          ) : null}
+          {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
 
           <TouchableOpacity
-            style={[GlobalStyles.button, !isButtonEnabled && GlobalStyles.buttonDisabled]}
+            style={[styles.primaryButton, !isButtonEnabled && styles.buttonDisabled]}
             onPress={handleVerify}
             disabled={!isButtonEnabled || isVerifying}
           >
-            <Text style={GlobalStyles.buttonText}>
-              {isVerifying ? 'Verifying...' : 'Continue'}
+            <Text style={styles.buttonText}>
+              {isVerifying ? 'AUTHENTICATING...' : 'VERIFY & CONTINUE'}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.resendButton}
-            onPress={handleResendCode}
-            disabled={isVerifying}
-          >
+          <TouchableOpacity style={styles.resendBtn} onPress={handleResendCode}>
             <Text style={styles.resendText}>
-                <Text style={styles.resendTextBold}>Didn't get OTP?</Text>{' '} Resend in 112 sec</Text>
+              Didn't receive code? <Text style={styles.goldText}>Resend</Text>
+            </Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -176,65 +155,42 @@ const VerificationScreen: React.FC<navigationProps> = ({
   );
 };
 
-export default VerificationScreen;
-
-/* =======================
-   STYLES
-======================= */
+// modified at todays date: 2026-02-13
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: BACKGROUND_COLOR },
-  container: { flex: 1, paddingHorizontal: 30, paddingTop: height * 0.05 },
-  content: { flex: 1, alignItems: 'center' },
-  logoContainer: { alignItems: 'center', marginBottom: 30 },
-  logo: { fontSize: 50 },
-  appName: { fontSize: 24, fontWeight: 'bold', color: PRIMARY_BLUE },
-  heading: { fontSize: 28, fontWeight: 'bold', marginBottom: 15 },
-  phoneNumberContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 12,
-    width: '100%',
-    marginBottom: 40,
-  },
-  bodyText: { textAlign: 'center', color: '#666' },
-  phoneNumberRow: { flexDirection: 'row', justifyContent: 'center' },
-  phoneNumber: { fontWeight: '600', marginRight: 10 },
-  modifyButton: {
-    backgroundColor: PRIMARY_BLUE,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-    inputLabel: {
-    fontSize: 35,
-    color: '#333',
-    marginBottom: 8,
-    fontWeight: 'bold',
-  },
-  modifyButtonText: { color: '#fff' },
-  otpContainer: { flexDirection: 'row', gap: 10, marginBottom: 20 },
+  safeArea: { flex: 1, backgroundColor: '#0F0F0F' },
+  container: { flex: 1, paddingHorizontal: 35 },
+  content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  title: { fontSize: 28, fontWeight: '900', color: '#FFF', marginBottom: 10 },
+  subtitle: { color: '#8E8E8E', textAlign: 'center', marginBottom: 40, lineHeight: 20 },
+  boldPhone: { color: '#D4AF37', fontWeight: '700' },
+  otpContainer: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginBottom: 30 },
   otpInput: {
     width: 65,
-    height: 50,
-    borderWidth: 2,
-    borderRadius: 5,
-    borderColor:"#65AF44",
-    textAlign: 'center',
-    fontSize: 22,
-    backgroundColor: '#fff',
-  },
-  otpInputFilled: { borderColor: PRIMARY_BLUE },
-  otpInputError: { borderColor: ERROR_RED },
-  errorText: { color: ERROR_RED, marginBottom: 10 },
-  button: {
-    width: '100%',
-    backgroundColor: PRIMARY_BLUE,
-    paddingVertical: 16,
+    height: 75,
+    backgroundColor: '#1A1A1A',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    color: '#D4AF37',
+    fontSize: 28,
+    textAlign: 'center',
+    fontWeight: '700',
+  },
+  otpInputFilled: { borderColor: '#D4AF37', backgroundColor: '#1F1C10' },
+  otpInputError: { borderColor: '#FF4D4D' },
+  errorText: { color: '#FF4D4D', marginBottom: 20, fontWeight: '600' },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#D4AF37',
+    paddingVertical: 18,
+    borderRadius: 8,
     alignItems: 'center',
   },
-  buttonDisabled: { backgroundColor: '#aaa' },
-  buttonText: { color: '#fff', fontSize: 18 },
-  resendButton: { marginTop: 12,fontSize:15 },
-  resendText: { color: '#333' },
-  resendTextBold:{fontSize: 18}
+  buttonDisabled: { backgroundColor: '#2A2A2A' },
+  buttonText: { color: '#0F0F0F', fontSize: 15, fontWeight: 'bold' },
+  resendBtn: { marginTop: 30 },
+  resendText: { color: '#8E8E8E', fontSize: 14 },
+  goldText: { color: '#D4AF37', fontWeight: '700' },
 });
+
+export default VerificationScreen;

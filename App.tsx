@@ -3,11 +3,6 @@ import {
   StyleSheet,
   View,
   StatusBar,
-  SafeAreaView,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  Platform,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,25 +11,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './source/pages/login/login';
 import VerificationScreen from './source/pages/login/verification';
 import Productlist from './source/pages/products/productlist';
-import RequestSummary from './source/pages/products/requestSummary'
+import RequestSummary from './source/pages/products/requestSummary';
+import SplashScreen from './source/pages/splash/SplashScreen';
+import { askLocationPermission } from './source/permissions/location';
+import { requestNotificationPermission } from './source/permissions/notification';
 
+const BACKGROUND_COLOR = '#0F0F0F';
 
-
-const BACKGROUND_COLOR = '#F0F4F2';
-
-type AppScreen = 'Login' | 'Verification' | 'Home'| 'RequestSummary';
+type AppScreen = 'Login' | 'Verification' | 'Home' | 'RequestSummary';
 
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('Login');
   const [mobileNumber, setMobileNumber] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [hasRequestedPermissions, setHasRequestedPermissions] = useState(false);
 
-  /* =========================
-     CHECK LOGIN ON APP START
-  ========================= */
   useEffect(() => {
     checkLoginStatus();
   }, []);
+
+  useEffect(() => {
+    const requestDefaultPermissions = async () => {
+      try {
+        await requestNotificationPermission();
+        await askLocationPermission();
+      } catch (error) {
+        console.log('Permission request error:', error);
+      } finally {
+        setHasRequestedPermissions(true);
+      }
+    };
+
+    if (!isLoading && isAuthChecked && !hasRequestedPermissions) {
+      requestDefaultPermissions();
+    }
+  }, [isLoading, isAuthChecked, hasRequestedPermissions]);
 
   const checkLoginStatus = async () => {
     try {
@@ -49,13 +61,10 @@ const App: React.FC = () => {
       console.log('Login check error:', error);
       setCurrentScreen('Login');
     } finally {
-      setIsLoading(false);
+      setIsAuthChecked(true);
     }
   };
 
-  /* =========================
-     LOGIN SUCCESS
-  ========================= */
   const handleLoginSuccess = async () => {
     try {
       await AsyncStorage.setItem('userLoggedIn', 'true');
@@ -65,9 +74,6 @@ const App: React.FC = () => {
     }
   };
 
-  /* =========================
-     NAVIGATION HANDLERS
-  ========================= */
   const handleNavigateToVerification = (mobile: string) => {
     setMobileNumber(mobile);
     setCurrentScreen('Verification');
@@ -76,39 +82,28 @@ const App: React.FC = () => {
   const handleNavigateToHome = () => {
     handleLoginSuccess();
   };
-const handleNavigateToProductSummary=()=>{
+
+  const handleNavigateToProductSummary = () => {
     setCurrentScreen('RequestSummary');
-}
+  };
+
   const handleNavigateBackToLogin = () => {
     setCurrentScreen('Login');
   };
 
-  /* =========================
-     LOGOUT
-  ========================= */
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('userLoggedIn');
+      await AsyncStorage.multiRemove(['userLoggedIn', 'userToken', 'accessToken', 'refreshToken']);
       setMobileNumber('');
       setCurrentScreen('Login');
     } catch (error) {
       console.log('Logout error:', error);
+      setMobileNumber('');
+      setCurrentScreen('Login');
     }
   };
 
-  /* =========================
-     SCREEN RENDER
-  ========================= */
   const renderScreen = () => {
-    if (isLoading) {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#34b977" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
-      );
-    }
-
     switch (currentScreen) {
       case 'Login':
         return (
@@ -128,28 +123,37 @@ const handleNavigateToProductSummary=()=>{
 
       case 'Home':
         return (
-          <Productlist 
+          <Productlist
             onNavigateToProductSummary={handleNavigateToProductSummary}
+            onLogout={handleLogout}
           />
         );
+
       case 'RequestSummary':
         return (
-          <RequestSummary onNavigateToProduct={handleNavigateToHome}/>
+          <RequestSummary onNavigateToProduct={handleNavigateToHome} />
         );
+
       default:
         return null;
     }
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={BACKGROUND_COLOR}
-        translucent={Platform.OS === 'android'}
-      />
-      <View style={styles.container}>{renderScreen()}</View>
-    </SafeAreaView>
+    <View style={styles.safeArea}>
+      {isLoading || !isAuthChecked ? (
+        <SplashScreen onAnimationFinished={() => setIsLoading(false)} />
+      ) : (
+        <>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent={true}
+          />
+          <View style={styles.container}>{renderScreen()}</View>
+        </>
+      )}
+    </View>
   );
 };
 
@@ -161,18 +165,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BACKGROUND_COLOR,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: BACKGROUND_COLOR,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
   },
 });
 
